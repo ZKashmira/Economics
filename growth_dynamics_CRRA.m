@@ -1,17 +1,20 @@
 % Study the saddle path of the growth model for different values of sigma (CRRA)
-
-%Parameter values
+ %Parameter values
 delta=.08;alpha=1/3;beta=.96;lambda=.5;T=200;
 A=1;
 sigma = [0.01, 1.01, 2, 3, 4, 10];
 cols = ['b--', 'g--', 'y--', 'r--', 'k--', 'c--'];
 
+kss=((1/beta-(1-delta))/A/alpha)^(1/(alpha-1));
+k0=lambda*kss;
+ksol(1)=k0;
 
 k = [0 : 0.01 : 5];
 k_lom = A * (k.^alpha) - delta * k;
 plot(k, k_lom)
 title('Saddle path - Neoclassical Growth Model')
 hold on
+cons = zeros(T, 6);
 
 for j = 1:6
     for t=2:T
@@ -35,8 +38,15 @@ for j = 1:6
     end
 
     c(1:(T-1))=A*ksol(1:(T-1)).^alpha+(1-delta)*ksol(1:(T-1))-ksol(2:T);c(T)=c(T-1);
-    h(j)=plot(ksol, c, cols(j))       
+    h(j)=plot(ksol, c, cols(j))
+    cons(:,j) = c;
 end
 
 hold off
 legend(h, '0.01', '1.01', '2', '3', '4', '10');
+
+
+figure(2);
+plot(cons);
+lgd = legend('0.01', '1.01', '2', '3', '4', '10');
+title('Consumption dynamics')
